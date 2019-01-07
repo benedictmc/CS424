@@ -1,0 +1,221 @@
+Author: Benedict McGovern
+15340696
+
+Question 1:
+Part 1:
+
+KONS λ a d z . z false a d
+1.
+Definition = Takes in {a,d,z} with z being false we can discard, then returns a list of a and d combined
+(λ a d z . z (λ a b . b) a d)
+= (λ a d .(a d))
+
+
+KAR  λ p . p (λ n a d . a)
+2.
+Definition = Takes in a list p and will return the first element, a
+(λ p . p (λ n a d . a))
+{
+    a: Head of list
+    d: Tail of list
+}
+returns a
+
+KDR
+3.
+Definition = Takes in a list p and will the tail of the list (list minus first element), d
+(λ p . p (λ n a d . d))
+{
+    a: Head of list
+    d: Tail of list
+}
+returns d
+
+NULL
+4.
+Definition = Takes a list and sees if the list is empty
+(λ z . ((z True) False) False)
+(λ z . ((z (λ a b . a))(λ a b . b))(λ a b . b))
+Subroutine = Apply True to false =  false
+             Apply false to false = True
+= (λ z . true)
+
+NULL?
+5.
+Definition = Takes a list and sees if the head of the list is empty, (Similar to KAR)
+(λ p . p (λ n a d . n))
+
+true
+6.
+Definition = Takes an element and returns that element, evaluates to true 
+(λ a b . a)
+(λ a .(λb . a))
+(λ a . a)
+
+false
+7.
+Definition = Takes an element and does not return that element, evaluates to false 
+(λ a b . b)
+(λ a .(λb . b))
+(λ a . b)
+(λ a . 0)
+
+Part 2:
+
+
+1. kar (kons e1 e2) ↝ e1
+
+λ a d z . z false a d
+(λ p . p (λ n a d . a)(λ a d z . z (λ a b . b) a d) e1 e2) // Expanded
+
+Section:  (λ a b . b) a d)
+1. (((λ a .(λ b . b)) a) d)) //Alpha equivalence
+2. (λ b . b) [a := a] = (λ b . b) //Beta Reduction
+3. ((λ b . b) d) //Left with (Alpha equivalence)
+4. b[b := d] = d //Beta Reduction
+5. d //Left with
+
+(λ p . p (λ n a d . a)(λ a d z . z d) e1 e2) 
+
+Section:  (λ a d z . z d)
+1. (((λ a .(λ d . (λ z.z)))d)) //Alpha equivalence
+2. (λ d . (λ z.z)[a: = d] //Beta Reduction
+3. (λ d . (λ z.z)) //Left with (Alpha equivalence)
+
+(λ p . p (λ n a d . a)(λ d . (λ z . z)) e1 e2) 
+
+Section: (λ n a d . a)(λ d . (λ z . z)) (The rest)
+1. (λ n .(λ a .(λ d . a)))(λ d . (λ z . z)) //Alpha equivalence
+2. rename d, (λ n .(λ a .(λ d . a)))(λ t . (λ z . z)) //Alpha equivalence
+3. (λ a .(λ d . a)  [n := (λ t . (λ z . z)] = (λ a .(λ d . a) //Beta Reduction
+4. (λ a .(λ d . a) //left with 
+
+(λ p . p (λ a .(λ d . a)) e1 e2)
+
+Section: (λ p . p (λ a .(λ d . a) e1 e2) 
+1. p[p := (λ a .(λ d . a) ] = (λ a .(λ d . a) //Beta Reduction
+2. (λ a .(λ d . a) e1 e2) //Alpha equivalence
+3. (λ d . a)[a := e1] = (λ d . e1) //Beta Reduction
+4. ((λ d . e1) e2) //Alpha equivalence
+5. e1[d := e2] = e1 //Beta Reduction
+6. e1 //Left with (Alpha equivalence)
+
+e1
+***End***
+
+
+2. kdr (kons e1 e2) ↝ e2
+
+(λ p . p (λ n a d . d))(λ a d z . z (λ a b . b) a d) e1 e2 
+
+Section: (λ a d z . z (λ a b . b) a d)
+1. ((((λ a .(λ d .(λ z . z)))(λ a . (λ b . b))) a) d) //Alpha equivalence
+2. rename a, (λ a . (λ b . b) -> (λ t . (λ b . b) //Alpha equivalence
+3. (λ d .(λ z . z)[a:= (λ t . (λ b . b))] = (λ d .(λ z . z)
+4. (((λ d .(λ z . z)) a) d) //Alpha equivalence
+5. (λ z . z)[d: a] = (λ z . z) //Beta Reduction
+6. ((λ z . z) d) //Alpha equivalence
+7. z[z:= d] = d //Beta Reduction
+8. d //Left with (Alpha equivalence)
+
+(λ p . p (λ n a d . d)) d e1 e2 
+
+Section: (λ p . p (λ n a d . d)) d e1 e2 (The rest)
+1. p[p := (λ n a d . d)] = (λ n a d . d)
+2. ((((λ n .(λ a .(λ d . d))) d) e1) e2)
+3. rename d, ((((λ n .(λ a .(λ d . d))) d) e1) e2) -> ((((λ n .(λ a .(λ d . d))) t) e1) e2)
+3. (λ a .(λ d . d)[n:= t] = (λ a .(λ d . d)
+4. (((λ a .(λ d . d) e1) e2)
+5. (λ d . d)[a := e1] = (λ d . d)
+6. d[d := e2] = e2
+7. e2
+
+e2
+***End***
+
+
+3. null? (kons e1 e2) ↝  false
+(λ p . p (λ n a d . n))(λ a d z . z (false) a d) e1 e2 
+(λ p . p (λ n a d . n))(λ a d z . z (false) a d) e1 e2 
+
+Section: (λ p . p (λ n a d . n))(λ a d z . z (false) a d)
+1. p[ p:= (λ n a d . n)] = (λ n a d . n) //Beta Reduction
+2. (λ n a d . n)(λ a d z . z (false) a d) e1 e2 //Alpha equivalence
+3. (λ a .(λ d .(λ z . z))) (false) a d) //Alpha equivalence
+4. (λ d .(λ z . z))[a := false] = (λ d .(λ z . z)) a d)
+5. (λ d .(λ z . z)) a d) //Alpha equivalence
+6. (λ z . z)[d := a] = (λ z . z) /Beta Reduction
+7. z[z := d]  /Beta Reduction
+8. d //Left with (Alpha equivalence)
+
+((λ n a d . n) d ) e1 e2 
+Section:  ((λ n a d . n) d ) e1 e2 (The rest)
+1 . ((λ n  .(λ a .(λ d . n) d )e1) e2) 
+2. (λ a .(λ d . n)[n:= d] = (λ a .(λ d . d)
+3. (λ a .(λ d . d)e1)
+4. (λ d . d)
+5. is always going to equal d
+
+
+
+3. null? null ↝ true
+λ p . p (λ n a d . n)(λ z . z) true false false
+==True
+
+
+
+*****Part 2:*****
+
+1. Replace any instance of input two pick the second with false -- ((λ a b . b) == False)
+(λ c . (λ a . (λ d . (λ h . (h (d (a (a false)) (d (a (a false)) (a (a (a false))))) (h (a (a false)) (a (a (a false))))))(λ n m . n (d m) false)) (λ n m . n a m)) (λ n z . c (n z) z)) (λ z g x . z (g x))
+
+(λ c . (λ a . (λ d . (λ h . (h (d (a (a false)) (d (a (a false)) (a (a (a false))))) (h (a (a false)) (a (a (a false))))))(λ n m . n (d m) false)) (λ n m . n a m)) (λ n z . c (n z) z)) (λ z g x . z (g x))
+
+
+(λ a . (λ d . (λ h . (h (d (a (a false)) (d (a (a false)) (a (a (a false))))) (h (a (a false)) (a (a (a false))))))(λ n m . n (d m) false)) (λ n m . n a m))
+
+//Beta Reduce (λ n z . c (n z) z) == c
+
+(λ c . (λ a . (λ d . (λ h . (h (d (a (a false)) (d (a (a false)) (a (a (a false))))) (h (a (a false)) (a (a (a false))))))(λ n m . n (d m) false)) (λ n m . n a m)) c) (λ z g x . z (g x))
+
+//(λ n m . n (d m) false) == (d m)
+
+(λ c . (λ a . (λ d . (λ h . (h (d (a (a false)) (d (a (a false)) (a (a (a false))))) (h (a (a false)) (a (a (a false))))))(d m)) (λ n m . n a m)) c) (λ z g x . z (g x))
+
+//(λ n m . n a m) == a
+
+(λ c . (λ a . (λ d . (λ h . (h (d (a (a false)) (d (a (a false)) (a (a (a false))))) (h (a (a false)) (a (a (a false))))))(d m)) a) c) (λ z g x . z (g x))
+
+//(λ z g x . z (g x) = (λ g x . (g x))
+
+//Beta Reduce [c := (λ z g x . z (g x)]
+
+(λ a . (λ d . (λ h . (h (d (a (a false)) (d (a (a false)) (a (a (a false))))) (h (a (a false)) (a (a (a false))))))(d m)) a) (λ z g x . z (g x))
+
+//Beta Reduce [d := a]
+
+(λ a . (λ h . (h (a (a (a false)) (a (a (a false)) (a (a (a false))))) (h (a (a false)) (a (a (a false))))))(d m)) (λ z g x . z (g x))
+
+//t = (a (a false))
+(λ a . (λ h . (h (a t (a t (a t))) (h t (a t))))(d m)) (λ z g x . z (g x))
+
+//Beta Reduce [a := (d m)]
+
+(λ h . (h ((d m) t ((d m) t ((d m) t))) (h t ((d m) t)))) (λ z g x . z (g x))
+
+//Beta Reduce [h := (λ z g x . z (g x))]
+
+((λ z g x . z (g x)) ((d m) t ((d m) t ((d m) t))) ((λ z g x . z (g x)) t ((d m) t))))
+
+//Replace constant w, ((d m) t ((d m) t ((d m) t)))  -> w
+
+((λ z g x . z (g x)) w ((λ z g x . z (g x)) t ((d m) t))))
+
+//Beta Reduce will give you a value of (g x)
+(g x)
+
+
+
+
+
+
